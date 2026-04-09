@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACPaws</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="landing-page" class="view-section active">
+        <div class="landing-container">
+            <h1 class="logo-text">ACPaws</h1>
+            <p>Select your clearance level to proceed:</p>
+            <div class="landing-buttons">
+                <button class="btn-primary" onclick="showSection('login-page')">HQ Access (Admin)</button>
+                <button class="btn-outline" onclick="enterVisitorView()">Civilian Portal (Visitor)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-page" class="view-section">
+        <div class="login-container">
+            <h2>HQ LOGIN</h2>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Agent ID (admin)" required>
+                <input type="password" id="password" placeholder="Passcode (admin)" required>
+                <button type="submit" class="btn-primary">Authenticate</button>
+                <button type="button" class="btn-outline" onclick="showSection('landing-page')">Abort</button>
+            </form>
+            <p id="login-error" class="error hidden">Access Denied: Invalid credentials.</p>
+        </div>
+    </div>
+
+    <div id="admin-view" class="view-section">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">⚃</span>
+            <span class="logo-text-small">ACPaws</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="switchTab('dashboard')">
+                <span class="nav-icon"></span> DASHBOARD
+            </li>
+            <li class="nav-item" onclick="switchTab('history')">
+                <span class="nav-icon"></span> ADOPTION HISTORY
+            </li>
+            
+            <li class="nav-item" onclick="switchTab('requests')">
+                <span class="nav-icon"></span> ADOPTION REQUESTS
+                <span id="request-badge" class="notification-badge">0</span>
+            </li>
+            
+            <li class="nav-item" onclick="switchTab('staffs')">
+                <span class="nav-icon"></span> STAFF
+            </li>
+        </ul>
+            
+            <div class="sidebar-bottom">
+                <button class="btn-danger-full" onclick="openAddPetModal()">URGENT MISSION</button>
+                <ul class="nav-menu-small">
+                    <li onclick="logout()"><span>LOGOUT</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div id="dashboard" class="tab-content active">
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">HEROES DEPLOYED</div>
+                        <div class="kpi-value text-blue" id="kpi-deployed">0</div>
+                        <div class="kpi-trend text-green">↗ +Active Placements</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">PENDING RESCUES</div>
+                        <div class="kpi-value text-red" id="kpi-pending">0</div>
+                        <div class="kpi-trend text-red">Awaiting assignment</div>
+                    </div>
+                    <div class="kpi-card gold-border">
+                        <div class="kpi-title">JUSTICE REVENUE</div>
+                        <div class="kpi-value text-gold" id="kpi-revenue">$0</div>
+                        <div class="kpi-trend">Fueling the mission</div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <div class="header-titles">
+                        <h2>ACTIVE ROSTER</h2>
+                        <p>Live tactical overview. Available heroes are prioritized.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-outline" onclick="openAddPetModal()">Add Pet Intel</button>
+                        <button class="btn-primary" onclick="openAdminAdoptModal()">Log New Adoption</button>
+                    </div>
+                </div>
+
+                <table class="mission-table">
+                    <thead>
+                        <tr>
+                            <th>PET ID</th><th>INTEL DATE</th><th>PET INTEL</th><th>SPECIES/BREED</th><th>FEE</th><th>STATUS</th><th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-pets-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="history" class="tab-content">
+                <div class="section-header">
+                    <div class="header-titles">
+                        <h2>MISSION RECORDS</h2>
+                        <p>Historical logs of successfully deployed heroes.</p>
+                    </div>
+                </div>
+                <table class="mission-table">
+                    <thead>
+                        <tr>
+                            <th>ADOPTION ID</th><th>MISSION DATE</th><th>PET INTEL</th><th>ADOPTER CONTACT</th><th>STAFF ASSIGNED</th><th>STATUS</th><th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="requests" class="tab-content">
+                <div class="section-header">
+                    <div class="header-titles">
+                        <h2>CIVILIAN REQUESTS</h2>
+                        <p>Pending applications for hero deployment.</p>
+                    </div>
+                </div>
+                <table class="mission-table">
+                    <thead>
+                        <tr>
+                            <th>REQ ID</th><th>DATE FILED</th><th>PET TARGET</th><th>APPLICANT INTEL</th><th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requests-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="staffs" class="tab-content">
+                <div class="section-header">
+                    <div class="header-titles">
+                        <h2>ACPAWS ROSTER</h2>
+                        <p>Active operatives assigned to the initiative.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-primary" onclick="openAddStaffModal()">Enlist Operative</button>
+                    </div>
+                </div>
+                <table class="mission-table">
+                    <thead>
+                        <tr>
+                            <th>OPERATIVE ID</th><th>AVATAR</th><th>DESIGNATION</th><th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staffs-tbody"></tbody>
+                </table>
+            </div>
+
+            <footer class="footer">
+                <p>© 2026 ACPAWS CORPORATIVE. ALL RIGHTS RESERVED.</p>
+            </footer>
+        </main>
+    </div>
+
+    <div id="visitor-view" class="view-section">
+        <header class="visitor-header">
+            <h2 class="logo-text">CINEMATIC VALOR PORTAL</h2>
+            <button class="btn-outline" onclick="showSection('landing-page')">Disconnect</button>
+        </header>
+        <div class="visitor-content">
+            <h3 style="margin-bottom: 20px; color: var(--text-dark);">Available Heroes for Deployment</h3>
+            <div id="visitor-pet-grid" class="pet-grid"></div>
+        </div>
+    </div>
+
+    <div id="add-pet-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('add-pet-modal')">&times;</span>
+            <h3 id="pet-modal-title">Input Pet Intel</h3>
+            <form id="pet-form">
+                <input type="hidden" id="pet-id">
+                <input type="text" id="pet-name" placeholder="Codename (Pet Name)" required>
+                <input type="text" id="pet-species" placeholder="Species (e.g., Canine, Feline)" required>
+                <input type="text" id="pet-breed" placeholder="Breed" required>
+                <input type="number" id="pet-age" placeholder="Age" required>
+                <input type="number" id="pet-fee" placeholder="Deployment Fee ($)" required>
+                
+                <select id="pet-vax" required>
+                    <option value="" disabled selected>Select Shield Status (Vaccination)</option>
+                    <option value="Fully Shielded">Fully Shielded</option>
+                    <option value="Booster Pending">Booster Pending</option>
+                    <option value="Unshielded">Unshielded</option>
+                </select>
+
+                <label class="file-label">Upload Intel Photo (Leave empty to keep current):</label>
+                <input type="file" id="pet-image" accept="image/*">
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Save Intel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-adopt-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('admin-adopt-modal')">&times;</span>
+            <h3>Execute Deployment (Log Adoption)</h3>
+            <form id="admin-adopt-form">
+                <select id="adopt-pet-select" required></select>
+                <select id="adopt-staff-select" required></select>
+                <input type="text" id="adopter-name" placeholder="Adopter Name" required>
+                <input type="text" id="adopter-contact" placeholder="Contact Number" required>
+                <input type="text" id="adopter-address" placeholder="Address" required>
+                <label class="file-label">Upload Adopter ID:</label>
+                <input type="file" id="adopter-image" accept="image/*">
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Authorize Mission</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="view-pet-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('view-pet-modal')">&times;</span>
+            <h3>Intel File</h3>
+            <div id="pet-details-content" class="details-box"></div>
+        </div>
+    </div>
+
+    <div id="view-adopter-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('view-adopter-modal')">&times;</span>
+            <h3>Adopter Intel</h3>
+            <div id="adopter-details-content" class="details-box"></div>
+        </div>
+    </div>
+
+    <div id="visitor-adopt-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('visitor-adopt-modal')">&times;</span>
+            <h3>Deployment Application</h3>
+            <form id="visitor-adopt-form">
+                <input type="hidden" id="visitor-req-pet-id">
+                <input type="text" id="req-adopter-name" placeholder="Applicant Name" required>
+                <input type="text" id="req-adopter-contact" placeholder="Contact Number" required>
+                <input type="text" id="req-adopter-address" placeholder="Location" required>
+                <label class="file-label">Upload ID Photo:</label>
+                <input type="file" id="req-adopter-image" accept="image/*">
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-request-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('confirm-request-modal')">&times;</span>
+            <h3>Approve Civilian Request</h3>
+            <p style="margin-bottom:15px; font-size:14px;">Assign an operative to oversee this deployment.</p>
+            <form id="confirm-request-form">
+                <input type="hidden" id="confirm-req-id">
+                <select id="confirm-staff-select" required></select>
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Finalize Deployment</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="staff-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('staff-modal')">&times;</span>
+            <h3 id="staff-modal-title">Enlist Operative</h3>
+            <form id="staff-form">
+                <input type="hidden" id="staff-id">
+                <input type="text" id="staff-name" placeholder="Operative Name" required>
+                <label class="file-label">Upload ID Photo (Leave empty to keep current):</label>
+                <input type="file" id="staff-image" accept="image/*">
+                <button type="submit" class="btn-primary" style="width:100%; margin-top:15px;">Save Operative</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="custom-confirm-modal" class="modal">
+        <div class="modal-content" style="text-align: center; width: 350px;">
+            <span class="close" onclick="closeModal('custom-confirm-modal')">&times;</span>
+            <h3 id="confirm-title" style="color: var(--danger); border-bottom: none;">CONFIRM ACTION</h3>
+            <p id="confirm-message" style="margin: 10px 0 25px; font-weight: 600; font-size: 15px; color: var(--text-dark);"></p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn-outline" style="flex: 1;" onclick="closeModal('custom-confirm-modal')">Abort</button>
+                <button id="confirm-action-btn" class="btn-danger-full" style="flex: 1; border-radius: 8px;">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-alert-modal" class="modal">
+        <div class="modal-content" style="text-align: center; width: 350px;">
+            <span class="close" onclick="closeModal('custom-alert-modal')">&times;</span>
+            <h3 id="alert-title" style="color: var(--primary); border-bottom: none;">NOTIFICATION</h3>
+            <p id="alert-message" style="margin: 10px 0 25px; font-weight: 600; font-size: 15px; color: var(--text-dark);"></p>
+            <button class="btn-primary" style="width: 100%;" onclick="closeModal('custom-alert-modal')">Acknowledge</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
