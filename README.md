@@ -13,7 +13,7 @@ Pet status updated to adopted
 Records saved in database/local storage
 
 MEMBERS: 
-Eljohn Jakosalem
-Jan Greg Galicia
-James Bryan Dador
+Eljohn Jakosalem | 
+Jan Greg Galicia | 
+James Bryan Dador | 
 Urvisa Tawing
